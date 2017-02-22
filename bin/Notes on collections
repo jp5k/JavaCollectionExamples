@@ -1,0 +1,57 @@
+Collections Notes
+
+Chapter 1 - 
+To add to array, Add - will give indexOutOfBounds exception. Would have to reimplement
+the add operation to resize the array. This would be a lot of hard work!!!
+Arrays are a very low level feature.  Arrays can't enforce constraints in our code, 
+e.g no duplicates (like a set can).
+
+Collections ship with the Java JDK, because:
+1) Very common to be used throughout code
+2) Implementing data structures yourself can be hard (edge, corner cases)
+3) Very diverse data structures - ordering, uniqueness, pairs
+
+Chapter 2 - Defining and Iterating Collections
+All collection interfaces extend 'Java.Util.Collection' - has common methods which they all implement.
+Interfaces include: Lists, Sets, SortedSets, Queue, Deque, Map, SortedMap
+IMPLEMENTATIONS INLCUDE: ArrayList, LinkedList, HashSet, TreeSet, PriorityQueue, ArrayDeque, HashMap, TreeMap
+
+Interfaces vs Implementation.
+Interfaces
+*An interface can be backed by multiple different implementations.
+*Functional characteristics (e.g can collection be sorted, or have random access)
+*Prefer as variable type
+*Often has a popular implementation
+
+Implementation
+*Specific data structure
+*Performance characteristics
+*Concrete and instantiable 
+
+Chapter contains a good flowchart depending on which implementation you need.
+
+Iteration, Sizing, Mutation (These are common across all collections)
+The Collection interface extends the Iterable interface.  This defines something which can be iterated over.  Can pull 
+iterator out of it, which ACTS LIKE A CURSOR - V.IMPORTANT
+Some common methods in the Collection interface (size(), isEmpty(), add(element), addAll(collection), remove(element),
+removeAll(collection), retainAll(collection), contains(element), containsAll(collection), clear()
+
+Chapter 3 - collections with Iteration Order: Lists 
+Lists are collections with iteration order. Each element has an order in the list.
+List interface adds some more methods:
+void add(int index, E e);
+E get(int index);
+E remove(int index);
+E set(int index, E element);
+boolean addAll(int index, Collection<? extends E> c);
+
+Can also lookup values by index, e.g
+int indexOf(Object o);
+Int lastIndexOf(Object o);
+
+Also have concept of a subList, which are a view over ranges of lists.
+If you modify the view, you modify the underlying list.
+List<E> subList(int fromIndex, int toIndex);
+(the from index is inclusive, the toIndex to exclusive)
+ 
+
