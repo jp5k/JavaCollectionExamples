@@ -1,4 +1,4 @@
-package com.pluralsight.lists;
+package com.pluralsight.maps;
 
 import java.util.Comparator;
 
@@ -9,11 +9,13 @@ public class Product {
 	public static final Comparator<Product> BY_WEIGHT = Comparator.comparing(Product::getWeight);
 	public static final Comparator<Product> BY_NAME = Comparator.comparing(Product::getName);
 	
+	private final int id;
 	private final String name;
 	private final int weight;
 
-	public Product(String name, int weight) {
+	public Product(final int id, final String name, final int weight) {
 
+		this.id = id;
 		this.name = name;
 		this.weight = weight;
 
@@ -64,6 +66,13 @@ public class Product {
 		if (weight != other.weight)
 			return false;
 		return true;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
 	}
 	
 // IMPLEMENTING THE HASHCODE/EQUALS METHOD, LET THE IDE DO THIS FOR YOU!!

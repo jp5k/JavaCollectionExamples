@@ -1,0 +1,370 @@
+Collections Notes
+=================
+
+Chapter 1 - Introduction
+========================
+To add to array, Add - will give indexOutOfBounds exception. Would have to re-implement
+the add operation to resize the array. This would be a lot of hard work!!!
+Arrays are a very low level feature.  Arrays can't enforce constraints in our code, 
+e.g no duplicates (like a set can).
+
+Collections ship with the Java JDK, because:
+1) Very common to be used throughout code
+2) Implementing data structures yourself can be hard (edge, corner cases)
+3) Very diverse data structures - ordering, uniqueness, pairs
+
+Chapter 2 - Defining and Iterating Collections
+==============================================
+All collection interfaces extend 'Java.Util.Collection' - has common methods which they all implement.
+Interfaces include: Lists, Sets, SortedSets, Queue, Deque, Map, SortedMap
+IMPLEMENTATIONS INLCUDE: ArrayList, LinkedList, HashSet, TreeSet, PriorityQueue, ArrayDeque, HashMap, TreeMap
+
+Interfaces vs Implementation.
+Interfaces
+*An interface can be backed by multiple different implementations.
+*Functional characteristics (e.g can collection be sorted, or have random access)
+*Prefer as variable type
+*Often has a popular implementation
+
+Implementation
+*Specific data structure
+*Performance characteristics
+*Concrete and instantiable 
+
+Chapter contains a good flowchart depending on which implementation you need.
+
+Iteration, Sizing, Mutation (These are common across all collections)
+The Collection interface extends the Iterable interface.  This defines something which can be iterated over.  Can pull 
+iterator out of it, which ACTS LIKE A CURSOR - V.IMPORTANT
+Some common methods in the Collection interface (size(), isEmpty(), add(element), addAll(collection), remove(element),
+removeAll(collection), retainAll(collection), contains(element), containsAll(collection), clear()
+
+Chapter 3 - collections with Iteration Order: Lists 
+===================================================
+Lists are collections with iteration order. Each element has an order in the list.
+List interface adds some more methods:
+void add(int index, E e);
+E get(int index);
+E remove(int index);
+E set(int index, E element);
+boolean addAll(int index, Collection<? extends E> c);
+
+Can also lookup values by index, e.g
+int indexOf(Object o);
+Int lastIndexOf(Object o);
+
+Also have concept of a subList, which are a view over ranges of lists.
+If you modify the view, you modify the underlying list.
+List<E> subList(int fromIndex, int toIndex);
+(the from index is inclusive, the toIndex to exclusive)
+
+Two common implementations of the list interface are: ArrayList and LinkedList
+ArrayList - 
+---------
+*	Good general purpose implementation
+*	Use as default
+*	More CPU Cache sympathetic
+*	Will double as you get to last element (2,4,8,16,32)
+
+Linked List 
+-----------
+(Doubly linked list) Each element points to next and previous element.
+Easy to repeatedly add and remove elements.
+*	Worse performance for many operations
+*	Use when adding elements at start
+*	Or when adding/removing a lot
+ 
+ 
+		 	get		add				contains		next		remove
+ArrayList   O(1)  	O(N),Omega(1)	O(N)			O(1)		O(N)
+LinkedList  O(N)	O(1)			O(N)			O(1)		O(1)
+
+
+Chapter 4 - Sets (Collections with Uniqueness)
+==============================================
+Collections with distinct elements.  No duplicates.
+HashSet, TreeSet, EnumSet are the three commonly used implementations.
+
+HashSet and TreeSet both implement the Set interface.
+TreeSets also implement the sortedSet and navigableSet interfaces, so has other features.
+
+EnumSet is a Set which is designed to be efficient with Enum types.
+
+HashSet
+-------
+Based upon HashMap.  Calls hashCode() on element and looks up location.  Therefore need a hashCode method.
+Good general purpose implementation.  Resizes when it runs out of space.
+HashCode Equals contract very important.
+
+object.equals(other) ==> object.hashCode() == other.hashCode
+This is the Equals/Hashcode contract (NB a one way implementation).  
+This ensures the objects are hashed into the same slot.  So, if already have an object with a hashcode, 
+then another object with same hashcode will not be added to a Set, so that it retains uniqueness.
+
+To implement the HashCode method, need to make hashcode method as similar to the equals method. 
+We may want 'value' based equality (i.e. our products are equal if they have the same name and the 
+same weight). 
+
+Equals method would check all fields on an object are equal.
+Take a 'result' (17 for example), then take hashCode() for EACH FIELD:
+result = 31 * result + obj.hashCode();
+
+Arrays.hashCode() for arrays.
+
+LET YOUR IDE DO THE HEAVY LIFTING, which let you generate hashcode and equals methods at the 
+same time !!! or use Objects.hashCode() which is built into the JDK.  
+
+ALWAYS USE THE SAME FIELDS WHEN BUILDING HASHCODE THAT HAVE BEEN USED FOR THE EQUALS CONTRACT !!!!!
+
+IF UPDATING EQUALS METHOD WITH A NEW FIELD, MUST ALSO UPDATE THE HASHCODE METHOD WITH THAT FIELD TOO.
+
+TreeSet
+-------
+Based upon TreeMap
+Uses a Binary Tree with a required sort order.  (Either go left or right).
+TreeSets keep elements in the given order.  See SortedSet and NavigableSet.
+To be in the correct order either need to implement the comparable interface, or provide a comparator
+to the constructor of the TreeSet in order to define the order.
+
+EnumSet
+-------
+Specialized implementation for enums
+Uses a bitset based upon the ordinal of the enum  
+Use when storing sets of Enums.
+
+Algorithmic performance 
+
+			add					contains			next
+HashSet		O(N),Omega(1)		O(N),Omega(1)		O(Capacity/N)
+
+TreeSet		O(log N)			O(log N)			O(log(N)
+
+EnumSet		O(1)				O(1)				O(1)
+
+
+SortedSet and NavigableSet
+--------------------------
+A collection with distinct elements that also have order.
+Both are sets which enforce and order, but there isn't an index. 
+
+SortedSet
+E first();   (returns first element in set)
+E last();  	 (returns last element in set)
+
+SortedSet<E> tailSet(E fromElement)		Returns a view of tail
+SortedSet<E> headSet(E toElement)		Returns a view of head
+SortedSet<E> subSet(E fromElement, E toElement);	subset view of main SortedSet
+
+Removing an element from the view, removes from the Collection. 
+
+NavigableSet - extend the SortedSet interface
+Provides ways to move through the order.  Implemented by TreeSet
+E lower(E e);
+E higher(E e);
+E floor(E e);
+E ceiling(E e);
+E pollFirst();
+E pollLast();
+
+Chapter 5 - Queues and Dequeues (Collections with Modification Order)
+=====================================================================
+First In, First Out (Queues)
+Highest Priority Out (Priority Queue)
+Last In, First Out (Stacks)
+
+First In, First Out
+-------------------
+-->[]-[]-[]-[]---->
+
+boolean offer(E e)     ]
+boolean add(E e)       ]---important that add in Collection api only returns flase if 
+element is already present.  So best to use 'offer', as queue can become full.
+
+E remove()   - removes element off the back of the queue (throws exception when queue is empty)
+E poll()	  - this is much better, returns null when empty rather than exception.
+ 
+E element()   - Read without removing.  throws exception when empty     
+E peek()      - returns null when empty
+
+Priority Queue
+--------------
+Priority really just defines ordering (see HelpDeskPriorityQueue for example)
+
+Stacks and Double Ended Queues (DEQUES)
+---------------------------------------
+Last In, First Out
+Stack implementation java.util.stack deprecated (it was synchronized methods, which often weren't needed)
+
+Double Ended Queue correct way to use stacks.  Can add or remove from both ends.  Can be used as a queue or 
+a stack.  
+
+Methods are separated into 'first' and 'last' for double ended nature
+// Add elements
+boolean offerFirst(E e)
+boolean offerLast(E e)
+
+void addFirst(E e)
+void addLast(E e)
+
+offer returns false if queue is full, add throws exception if queue is full
+
+// Read and remove
+E removeFirst()
+E removeLast()
+
+E pollFirst()
+E pollLast()
+
+// Read without removing
+E getFirst()
+E getLast()
+
+E peekFirst
+E peekLast
+
+// Semantic naming for Stacks/LIFO 
+void push(E e)
+E pop()
+
+
+ArrayDeque is the main implementation for a queue (DON'T USE A LINKED LIST FOR QUEUE, OR A STACK (DEPRECATED)).
+
+
+Chapter 6 - Maps (Collections of Pairs)
+=====================================================================
+Collections of pairs of values.
+Key --> Value
+Maps have distinct keys.  Distinct determined by hashcode/equals, or 'comparison order and equals'.
+Maps also very fast (compared to comparing id's in a List)
+
+Adding and replacing
+V put(K key, V value)  (will update with new value, if replacing an existing key)
+
+void putAll(<ap<? extends K, ? extends V> values)    
+
+Looking up elements
+V get(Object key)   (take object type to give flexibility)
+boolean containsKey(Object key)
+boolean containsValue(Object value)
+
+Removing elements
+V remove(Object key)
+void clear()
+
+Querying the size
+int size()
+boolean isEmpty()
+
+Map is the only collections that don't extend or implement the Collection interface (because
+it has keys and values, so doesn't quite fit the Collection interface).
+
+Views over maps
+---------------
+keySet(), values(), entrySet()
+(see ViewsOverMaps class for examples)
+
+Sorted and Navigable Maps
+-------------------------
+Sorted and Navigable Maps extend the Map Interface
+Traversal is in Key ascending order.  SortedMap superseded by NavigableMap (i.e use NavigableMap only)
+
+NavigableMap
+------------
+Need to provide a key that's comparable, or have a sepcific comparator
+Map.Entry<K, V> firstEntry();
+Map.Entry<K, V> lastEntry();
+
+Map.Entry<K, V> pollFirstEntry();    --]
+Map.Entry<K, V> pollLastEntry();     --] removes element as well as returning it
+
+Map.Entry<K, V> lowerEntry(K key);   --] - provide the greatest element strictly < than key
+Map.Entry<K, V> higherEntry(K, key); --] - provide the greatest element strictly > than key
+
+Also have floorEntry() and ceilingEntry() methods.
+
+Views over NavigableMaps
+------------------------
+NavigableMap<K, V> tailMap(E fromKey, boolean incl);
+NavigableMap<K, V> headMap(E toKey, boolean incl);
+NavigableMap<K, V> subMap(E fromKey, boolean frominclusive, K toKey, boolean toinclusive);
+
+JAVA 8 Enhancements to Maps
+---------------------------
+A lot of Map enhancements in Java 8 (see Java8Maps class).  New methods include:
+replace(Key, value)
+replaceAll(BiFunction <K, V, V>) - takes bifunction key value, returns another value. Updates all elements in one go.
+remove(Key, value) - can remove by both key AND value 
+
+Updating values
+--------------  		
+getOrDefault (can return a default value if don't want null)
+putIfAbsent(like put, but will only update if absent beforehand)
+compute(takes key and function, allowing a new key for that function)
+merge(merge the old and new maps)
+forEach - callback based iteration
+
+IMPLEMENTATIONS OF MAPS
+-----------------------
+Three general purpose Maps = HashMap, LinkedHashMap, TreeMap
+
+HashMap = good general purpose implementation (USE THIS MAP MOST OF THE TIME!!!!)
+-------
+*	Uses the .hashcode() method (just like HashSet)
+*	Maintains an array of buckets
+    - hash % bucket_count
+
+Must not break the contract of the HashMap in terms of mutable keys.  i.e. if using 
+a string as the key for the HashMap, this would be a VERY BAD IDEAD.  If you changed the 
+values of the string, it would break the hashcode/equals contract.  
+SO DO NOT USE STRINGS AS KEY FOR HASHMAP !!!!!!
+
+
+TreeMap - is a balanced binary tree (using red-black tree)
+-------
+Also implements Navigable and Sorted
+
+EnumMap
+-------
+Special purpose maps where keys are Enums.  ONLY USE WHEN KEY IS ENUM
+
+Chapter 7 - Collection Operations (Common operations on any type of operation)
+=============================================================================
+Operations on class called java.util.Collections
+
+Algorithms
+----------
+rotate algoritms, collection.rotate().  Applies to Lists.
+Takes a collection and moves the last item in the list to the beginning, and shuffles up rest by one.
+
+shuffle.  Randomly rearranging order.  Also has an overloaded method which takes a random number generator. 
+
+sorting (Collections.sort).  Takes a list in a given order, and takes either a comparator or takes a list of comparable objects.
+Java8 also introduces the sort() method directly on a list, i.e. products.sort(Product.BY_NAME);
+
+
+Factories
+---------
+Creating new instances of collections.
+Static methods on collections class, which creates us a new collection with specific properties.
+Singleton factories, collections which only contain a single value.  All immutable (can't change state).
+Know there is only going to be one single value in the collection.
+Useful if using an API which takes collection as a parameter, but only wan't to pass one parameter.
+List<String> list = Collections.singletonList("one");
+
+Also empty collections:
+List<String> list = Collections.emptyList();     // Useful when want to pass no values to a method that takes a collection.
+
+UnmodifiableList
+Collections.unmodifiableList(items);    // Allows for a view of a collection to be unmodified (i.e can't 
+add to the view, but can still add to the underlying collection.
+
+
+Utilities
+---------
+Convenience utility methods, to make things easier.  
+VERY USEFUL WAY TO ADD many items into a collection, use the Collections.addAll method
+Collections.addAll(products, door, floorPanel, window);
+
+Collections.min(products, PRODUCT.BY_NAME)  --> takes a comparator, and gives min product by name
+
+
